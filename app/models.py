@@ -14,3 +14,22 @@ class User(db.Model):
 	def __init__(self, email, password):
 		self.email = email
 		self.password = password
+
+class Task(db.Model):
+	__tablename__ = 'tasks'
+
+	id = db.Column(db.Integer, primary_key=True)
+	task = db.Column(db.String(255), unique=True, nullable=False)
+	complete = db.Column(db.Boolean, nullable=True, default=False)
+	user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+	created_at = db.Column(
+		db.DateTime(timezone=True),
+		server_default=func.now(),
+		nullable=True
+	)
+
+	def __init__(self, task, complete, user_id, created_at):
+		self.task = task
+		self.complete = complete
+		self.user_id = user_id
+		self.created_at = created_at
