@@ -11,13 +11,16 @@ from app.exts import db
 import datetime
 
 authorizations = {
-    'Basic Auth': {
-        'type': 'basic',
+    'jsonWebToken': {
+        'type': 'apiKey',
         'in': 'header',
         'name': 'Authorization'
     },
 }
-task_namespace = Namespace('task', security='Basic Auth', authorizations=authorizations, description='A namespace for tasks')
+task_namespace = Namespace(
+    'task',
+    authorizations=authorizations
+)
 
 task_creation_model = task_namespace.model(
 	'TaskCreation', {
@@ -42,13 +45,14 @@ task_update_model = task_namespace.model(
 
 @task_namespace.route('/')
 class TaskGetResource(Resource):
-    @jwt_required(refresh=True)
+    @task_namespace.doc(security="jsonWebToken")
+    @jwt_required()
     def get(self):
         try:
             user_id = get_jwt_identity()
             return Task.query.filter_by(
-                user_id=user_id
-            )
+                    user_id=user_id
+                ).all()
         except ExpiredSignatureError:
             raise ExpiredTokenError
         except (DecodeError, InvalidTokenError):
@@ -59,7 +63,8 @@ class TaskGetResource(Resource):
 
 @task_namespace.route('/create')
 class TaskCreateResource(Resource):
-    @jwt_required(refresh=True)
+    @task_namespace.doc(security="jsonWebToken")
+    @jwt_required()
     @task_namespace.expect(task_creation_model)
     def post(self):
         try:
@@ -88,7 +93,8 @@ class TaskCreateResource(Resource):
 
 @task_namespace.route('/delete')
 class TaskDeleteResource(Resource):
-    @jwt_required(refresh=True)
+    @task_namespace.doc(security="jsonWebToken")
+    @jwt_required()
     @task_namespace.expect(task_deletion_model)
     def post(self):
         try:
@@ -112,7 +118,8 @@ class TaskDeleteResource(Resource):
 
 @task_namespace.route('/update')
 class TaskUpdateResource(Resource):
-    @jwt_required(refresh=True)
+    @task_namespace.doc(security="jsonWebToken")
+    @jwt_required()
     @task_namespace.expect(task_update_model)
     def post(self):
         try:
