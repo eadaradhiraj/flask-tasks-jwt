@@ -5,6 +5,7 @@ from flask_jwt_extended import jwt_required, get_jwt_identity
 from jwt.exceptions import ExpiredSignatureError, DecodeError, InvalidTokenError
 
 from app.resources.errors import InternalServerError, BadTokenError, ExpiredTokenError
+from app.resources.schema import TaskSchema
 
 from app.models import Task
 from app.exts import db
@@ -49,10 +50,12 @@ class TaskGetResource(Resource):
     @jwt_required()
     def get(self):
         try:
-            user_id = get_jwt_identity()
-            return Task.query.filter_by(
-                    user_id=user_id
+            tasks_schema = TaskSchema(many=True).dump(
+                Task.query.filter_by(
+                    user_id=get_jwt_identity()
                 ).all()
+            )
+            return jsonify(tasks_schema)
         except ExpiredSignatureError:
             raise ExpiredTokenError
         except (DecodeError, InvalidTokenError):

@@ -8,6 +8,7 @@ from flask_cors import CORS
 
 from app.models import User
 from app.exts import db
+from flask_marshmallow import Marshmallow
 
 from app.resources.auth import auth_namespace
 from app.resources.reset_password import reset_password_namespace
@@ -16,6 +17,7 @@ from app.resources.task import task_namespace
 def create_app():
 	app = Flask(__name__)
 	# Configuration
+	ma = Marshmallow(app)
 	app.config.from_object('config.DevelopmentConfig')
 
 	db.init_app(app)
