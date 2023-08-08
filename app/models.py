@@ -7,13 +7,12 @@ class User(db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(255), unique=True, nullable=False)
 	password = db.Column(db.String(255), nullable=False)
+	verified = db.Column(db.Boolean, default=False)
 
-	created_at = db.Column(db.DateTime(timezone=True), server_default=func.now())
-	updated_at = db.Column(db.DateTime(timezone=True), onupdate=func.now())
-
-	def __init__(self, email, password):
+	def __init__(self, email, password, verified):
 		self.email = email
 		self.password = password
+		self.verified = verified
 
 class Task(db.Model):
 	__tablename__ = 'tasks'

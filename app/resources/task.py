@@ -72,14 +72,11 @@ class TaskCreateResource(Resource):
     def post(self):
         try:
             body = request.get_json()
-            complete = body.get('complete')
-            user_id = get_jwt_identity()
-            task_str = body.get('task')
             db.session.add(
                 Task(
-                    task=task_str,
-                    user_id=user_id,
-                    complete=complete,
+                    task=body.get('task'),
+                    user_id=get_jwt_identity(),
+                    complete=body.get('complete'),
                     created_at=datetime.date.today()
                 )
             )
