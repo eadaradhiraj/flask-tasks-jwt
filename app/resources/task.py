@@ -91,15 +91,12 @@ class TaskCreateResource(Resource):
         except Exception:
             raise InternalServerError
 
-@task_namespace.route('/delete')
+@task_namespace.route('/delete/<task_id>')
 class TaskDeleteResource(Resource):
     @task_namespace.doc(security="jsonWebToken")
     @jwt_required()
-    @task_namespace.expect(task_deletion_model)
-    def post(self):
+    def get(self, task_id):
         try:
-            body = request.get_json()
-            task_id = body.get('task_id')
             user_id = get_jwt_identity()
             Task.query.filter_by(
                 id=task_id,

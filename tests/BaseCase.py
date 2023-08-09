@@ -11,14 +11,16 @@ class BaseCase(unittest.TestCase):
         self.app.config.from_object('config.TestConfig')
         self.client = self.app.test_client(self)
 
-        with self.app.app_context():
-            db.init_app(self.app)
-            db.create_all()
+        self.app_ctxt = self.app.app_context()
+        self.app_ctxt.push()        
+        db.create_all() # < --- update
 
     def tearDown(self):
-        with self.app.app_context():
-            db.session.remove()
-            db.drop_all()
+        db.session.remove()
+        db.drop_all() # < --- update        
+        self.app_ctxt.pop()        
+        self.app = None        
+        self.app_ctxt = None 
 
 if __name__ == '__main__':
     unittest.main()

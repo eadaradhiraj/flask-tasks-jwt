@@ -45,7 +45,7 @@ class VerifyMailResource(Resource):
 
 			return jsonify({
 				'msg': "Email verified"
-			})
+			},200)
 		except UnauthorizedError:
 			raise UnauthorizedError
 		except Exception as e:
