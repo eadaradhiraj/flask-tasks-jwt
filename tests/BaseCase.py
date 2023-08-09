@@ -7,8 +7,7 @@ import unittest
 
 class BaseCase(unittest.TestCase):
     def setUp(self):
-        self.app = create_app()
-        self.app.config.from_object('config.TestConfig')
+        self.app = create_app('config.TestConfig')
         self.client = self.app.test_client(self)
 
         self.app_ctxt = self.app.app_context()

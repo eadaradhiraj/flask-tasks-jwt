@@ -14,11 +14,11 @@ from app.resources.auth import auth_namespace
 from app.resources.reset_password import reset_password_namespace
 from app.resources.task import task_namespace
 
-def create_app():
+def create_app(config_class):
 	app = Flask(__name__)
 	# Configuration
 	ma = Marshmallow(app)
-	app.config.from_object('config.DevelopmentConfig')
+	app.config.from_object(config_class)
 
 	db.init_app(app)
 
